@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kruviz Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-800">
+    <!-- Header / Navbar -->
+    <header class="border-b shadow-sm sticky top-0 bg-white z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+      <h1 class="text-2xl font-bold">Kruviz</h1>
+      <!-- Hamburger Icon for Mobile (top right) -->
+      
+      <nav class="hidden md:flex space-x-6 text-sm font-medium">
+        <button type="button" class="hover:text-blue-600" id="new_lanunch">New Launch</button>
+        <button type="button" class="hover:text-blue-600">Shop by Collection</button>
+        <button type="button" class="hover:text-blue-600" id="new_arrivals">New Arrivals</button>
+        <button type="button" class="hover:text-blue-600" id="best_sellers">Best Sellers</button>
+        <button type="button" class="hover:text-blue-600">Track Order</button>
+        <button type="button" class="hover:text-blue-600" onclick="location.href='#about'">About Us</button>
+      </nav>
+
+
+      <div class="flex space-x-4 items-center">
+        <form action="/search" method="GET" class="inline">
+          <button type="submit" title="Search">🔍</button>
+        </form>
+        <a href="/login" title="Login"><button>👤</button></a>
+        
+        <form action="/like" method="POST" class="inline">
+          <button type="submit" title="Like">❤</button>
+        </form>
+        <a href="/cart" title="Cart"><button>🛒</button></a>
+        <!-- Hamburger Icon for Mobile beside cart icon -->
+        <button id="mobile-menu-btn" class="md:hidden focus:outline-none" aria-label="Open Menu">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Slide Menu -->
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 md:hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b">
+        <span class="text-2xl font-bold">Kruviz</span>
+        <button id="close-mobile-menu" class="focus:outline-none" aria-label="Close Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <nav class="flex flex-col space-y-4 px-6 py-4 text-base font-medium">
+        <button type="button" class="hover:text-blue-600" id="mobile-new_lanunch">New Launch</button>
+        <button type="button" class="hover:text-blue-600">Shop by Collection</button>
+        <button type="button" class="hover:text-blue-600" id="mobile-new_arrivals">New Arrivals</button>
+        <button type="button" class="hover:text-blue-600" id="mobile-best_sellers">Best Sellers</button>
+        <button type="button" class="hover:text-blue-600">Track Order</button>
+        <button type="button" class="hover:text-blue-600" onclick="location.href='#about'">About Us</button>
+      </nav>
+    </div>
+    <script>
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const closeMobileMenu = document.getElementById('close-mobile-menu');
+      mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.remove('-translate-x-full');
+      });
+      closeMobileMenu.addEventListener('click', () => {
+        mobileMenu.classList.add('-translate-x-full');
+      });
+      // Optional: Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+          mobileMenu.classList.add('-translate-x-full');
+        }
+      });
+    </script>
+  </header>  <!-- Promo Banner -->  <marquee class="bg-blue-900 text-white text-center py-2 text-sm font-semibold">
+    BEST OFFERS: BUY ANY 2 & GET 25% OFF
+  </marquee>
+  
+  <!-- Product Section -->  <section class="max-w-7xl mx-auto px-6 py-10">
+    <h2 class="text-xl font-semibold mb-6">New Drop</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Sidebar Filters -->
+      <aside class="hidden sm:block md:col-span-1 space-y-4 sticky top-20 self-start">
+        <details open class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Availability</summary>
+        </details>
+        <details class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Category</summary>
+        </details>
+        <details class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Product Type</summary>
+        </details>
+        <details class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Size</summary>
+        </details>
+        <details class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Color</summary>
+        </details>
+        <details class="border-b pb-2">
+          <summary class="cursor-pointer font-medium">Price</summary>
+        </details>
+      </aside>
+      <!-- Product List -->
+       
+      <div id = "change_content" class="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Example T-shirt blocks -->
+
+        {% for product in products %}
+        <div class="border rounded-lg p-4 bg-white shadow flex flex-col items-center">
+            <img src="{{ url_for('static', filename=product['img']) }}" alt="{{ product['name'] }}" class="h-40 w-full object-cover rounded mb-2" />
+            <h3 class="font-bold text-lg">{{ product['name'] | default('No Name') }}</h3>
+            <p class="text-gray-600">{{ product['description'] | default('No Description') }}</p>
+            <div class="mt-2 font-semibold text-blue-700">
+                {% if product['price'] %}
+                    ${{ '%.2f'|format(product['price']) }}
+                {% else %}
+                    Price Not Available
+                {% endif %}
+            </div>
+            <form action="/add_to_cart/{{ product['id'] }}" method="POST" class="mt-2">
+                <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Add to Cart</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="col-span-3 text-center text-gray-500">No products available.</div>
+        {% endfor %}
+
+
+        <!-- {% for product in products %}
+        <div class="border rounded-lg p-4 bg-white shadow flex flex-col items-center">
+          <img src="{{ url_for('static', filename=product['img']) }}" alt="Classic White Tee" class="h-40 w-full object-cover rounded mb-2" />
+          <h3 class="font-bold text-lg">{{product["name"]}}</h3>
+          <p class="text-gray-600">{{product["description"]}}</p>
+        </div>
+        {% endfor %} -->
+
+
+        
+        
+       
+        
+        
+         
+        </div>
+    </div>
+    
+  </section>  <!-- About Us -->  <section id="about" class="bg-gray-50 py-16">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 px-6">
+      <!-- Video / Image Placeholder -->
+      <img src="{{ url_for('static', filename='aboutside_img.avif') }}" alt="About Us Image" class="h-64 md:h-80 w-full object-cover rounded-lg" />
+      <!-- About Content -->
+      <div>
+        <h2 class="text-2xl font-bold mb-4 border-b-2 border-red-500 inline-block">About Us</h2>
+        <p class="mb-4">Kruviz is a streetwear brand that blends urban culture with contemporary fashion. Our mission is to provide high-quality, stylish apparel that resonates with the modern individual.</p>
+        <p class="mb-4">Founded in 2025, Kruviz has quickly become a favorite among fashion enthusiasts who appreciate unique designs and superior craftsmanship.</p>
+        <p class="mb-4">Join us on our journey as we continue to innovate   and redefine streetwear fashion.</p>
+        <button class="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Learn More</button>
+      </div>                                    
+    </div>
+  </section> 
+   <!-- Footer -->  <footer class="bg-gray-800 text-gray-300 py-10">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="font-semibold mb-4">Customer Service</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text -white">Contact Us</a></li>
+          <li><a href="#" class="hover:text -white">Track Order</a></li>
+          <li><a href="#" class="hover:text -white">Returns</a></li>
+          <li><a href="#" class="hover:text -white">Shipping Info</a></li>
+          <li><a href="#" class="hover:text -white">FAQs</a></li></ul>                               
+        </div>
+
+         <script>
+    document.getElementById("new_arrivals").addEventListener("click", function() {
+      fetch("/get_content")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("change_content").innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.message}</p>
+          `;
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    document.getElementById("best_sellers").addEventListener("click", function() {
+      fetch("/get_best_sellers")
+        .then(response => response.json())
+        .then data => {
+          document.getElementById("change_content").innerHTML = `
+            <h3>${data.title}</h3>
+            <p>${data.message}</p>
+          `;
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    
+  </script>
+</body>
+</html>
